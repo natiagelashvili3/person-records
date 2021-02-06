@@ -3,31 +3,30 @@ let form = document.getElementById('form');
 form.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    let errors = [];
+    let errors = 0;
 
-    let username = document.getElementById('username').value;
-    let password = document.getElementById('password').value;
-    let repeat_password = document.getElementById('repeat_password').value;
-    
-    if (!username) {
-        errors.push("Username is empty");
+    let inputs = document.getElementsByClassName('required');
+
+    for (let i = 0; i < inputs.length; i++) {
+        if (!inputs[i].value) {
+            errors++;
+
+            if(!inputs[i].parentNode.classList.contains('error')) {
+                inputs[i].parentNode.classList.add('error');
+                let span = document.createElement('span');
+                span.innerText = "*Required Field";
+                inputs[i].parentNode.appendChild(span);
+            }
+
+        } else {
+            inputs[i].parentNode.classList.remove('error');
+            if (inputs[i].parentNode.querySelector('span')) {
+                inputs[i].parentNode.querySelector('span').remove();
+            }
+        }
     }
 
-    if (!password) {
-        errors.push("Password is empty");
-    }
-
-    if (!repeat_password) {
-        errors.push("Repeat Password is empty");
-    }
-
-    if (password !== repeat_password) {
-        errors.push("Passwords does not match");
-    }
-
-    if (errors.length > 0) {
-        document.getElementById('errors').innerText = errors.join(", ");
-    } else {
+    if(errors == 0) {
         form.submit();
     }
 
