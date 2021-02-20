@@ -1,33 +1,46 @@
-let form = document.getElementById('form');
+let customSelect = document.querySelector('.custom-select');
 
-form.addEventListener('submit', function(event) {
-    event.preventDefault();
+// Create Custom Container For Ul
+let customSelectContainer = document.createElement('div');
+customSelectContainer.classList.add('custom-select-container');
 
-    let errors = 0;
-
-    let inputs = document.getElementsByClassName('required');
-
-    for (let i = 0; i < inputs.length; i++) {
-        if (!inputs[i].value) {
-            errors++;
-
-            if(!inputs[i].parentNode.classList.contains('error')) {
-                inputs[i].parentNode.classList.add('error');
-                let span = document.createElement('span');
-                span.innerText = "*Required Field";
-                inputs[i].parentNode.appendChild(span);
-            }
-
-        } else {
-            inputs[i].parentNode.classList.remove('error');
-            if (inputs[i].parentNode.querySelector('span')) {
-                inputs[i].parentNode.querySelector('span').remove();
-            }
-        }
-    }
-
-    if(errors == 0) {
-        form.submit();
-    }
-
+// დავაგენერიროთ ჰედერი
+let customSelectHead = document.createElement('div');
+customSelectHead.classList.add('custom-select-head');
+customSelectHead.innerText = customSelect.querySelector('select').getAttribute('data-title');
+console.log(customSelectHead);
+customSelectHead.addEventListener('click', function() {
+    // გაქრეს ან გამოჩდენს ul აითემი
+    this.parentNode.querySelector('ul').classList.toggle('visible');
 });
+
+// append head into the container
+customSelectContainer.appendChild(customSelectHead);
+
+// append container into the box
+customSelect.append(customSelectContainer);
+
+// დავაგენერიროთ ul ლისტი select-ის დახმარებით
+let customUl = document.createElement('ul');
+customUl.classList.add('custom-select-list');
+
+// დავაგენერიროთ li აითემები
+let options =customSelect.querySelectorAll('select option');
+for (let i = 0; i < options.length; i++) {
+    let customLi = document.createElement('li');
+    customLi.innerText = options[i].innerText;
+    customLi.setAttribute('data-value', options[i].getAttribute('value'));
+
+    customLi.addEventListener('click', function() {
+        let value = this.getAttribute('data-value');
+        customSelect.querySelector('select option[value="'+value+'"]').selected = true;
+
+        customSelectHead.innerText = this.innerText;
+        this.parentNode.classList.remove('visible');
+    });
+
+    customUl.appendChild(customLi);
+}
+
+// მივამაგროთ ul კონტეინერს
+customSelectContainer.appendChild(customUl);
